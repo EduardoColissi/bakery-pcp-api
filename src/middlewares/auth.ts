@@ -18,15 +18,14 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = verify(token, process.env.JWT_KEY ?? "") as JwtPayload;
 
-    const user = await prisma.employees.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id },
     });
 
     if (user) {
-      const { password: _, ...loggedUser } = user;
       return next();
     }
   } catch (err) {
-    return res.status(404).json({ message: "User not authorized" });
+    return res.status(404).json({ message: "Usuário não autorizado" });
   }
 };

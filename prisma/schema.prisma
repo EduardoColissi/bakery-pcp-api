@@ -6,3 +6,131 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Companies {
+  id            String    @id     @default(uuid())
+  name          String    @db.VarChar(255)
+  fantasy_name  String    @db.VarChar(255)
+  cnpj          String    @db.VarChar(14)
+  email         String    @db.VarChar(100)
+  cellphone     String    @db.VarChar(11)
+  logo          Bytes?    @db.LongBlob
+  color         String    @db.VarChar(15)
+  street        String    @db.VarChar(100)
+  number        String    @db.VarChar(10)
+  complement    String?   @db.VarChar(100)
+  neighborhood  String    @db.VarChar(100)
+  city          String    @db.VarChar(100)
+  state         String    @db.VarChar(100)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Companies_User     Company_Users[]
+  Logs               Logs[]
+  Roles              Roles[]
+  User_Role         User_Roles[]
+
+  @@map("companies")
+}
+
+model Users {
+  id            String    @id     @default(uuid())
+  first_name    String    @db.VarChar(50)
+  last_name     String    @db.VarChar(0)
+  email         String    @db.VarChar(100) @unique
+  cellphone     String    @db.VarChar(11)
+  password      String    @db.VarChar(150)
+  master        Boolean   @default(false)
+  support       Boolean   @default(false)
+  avatar        Bytes?    @db.LongBlob
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Companies_Users     Company_Users[]
+  Logs               Logs[]
+  Roles_Users         User_Roles[]
+
+  @@map("users")
+}
+
+model Company_Users {
+  id            String    @id     @default(uuid())
+  company_id    String
+  user_id       String    
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Companies     Companies @relation(fields: [company_id], references: [id])
+  Users         Users     @relation(fields: [user_id], references: [id])
+
+  @@map("company_user")
+}
+
+model Logs {
+  id            String    @id     @default(uuid())
+  user_id       String
+  company_id    String
+  action        String    @db.VarChar(50)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt 
+
+  Users         Users     @relation(fields: [user_id], references: [id])
+  Companies     Companies @relation(fields: [company_id], references: [id])
+
+  @@map("logs")
+}
+
+model Roles {
+  id            String    @id     @default(uuid())
+  name          String    @db.VarChar(50)
+  description   String    @db.VarChar(250)
+  default       Boolean   @default(false)
+  company_id    String?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Companies    Companies? @relation(fields: [company_id], references: [id])
+
+  Roles_User   User_Roles[]
+  Role_Permissions Role_Permissions[]
+
+  @@map("roles")
+}
+
+model User_Roles {
+  id            String    @id     @default(uuid())
+  user_id       String
+  role_id       String
+  company_id    String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Users         Users     @relation(fields: [user_id], references: [id])
+  Roles         Roles     @relation(fields: [role_id], references: [id])
+  Companies     Companies @relation(fields: [company_id], references: [id])
+ 
+  @@map("user_roles")
+}
+
+model Permissions {
+  id            String    @id     @default(uuid())
+  function      String    @db.VarChar(150)
+  description   String    @db.VarChar(250)
+  created_at    DateTime  @default(now())                          
+  Role_Permissions Role_Permissions[]
+
+  @@map("permissions")
+}
+
+model Role_Permissions {
+  id            String    @id     @default(uuid())
+  role_id       String
+  permission_id String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  Roles         Roles        @relation(fields: [role_id], references: [id])
+  Permissions   Permissions  @relation(fields: [permission_id], references: [id])
+
+  @@map("role_permissions")
+}
