@@ -4,12 +4,10 @@ import { sign } from "jsonwebtoken";
 import bcryptjs, { hash } from "bcryptjs";
 
 class UsersController {
-  model = new UsersModel();
-
   async login(request: Request, response: Response) {
     try {
       const { email, password } = request.body;
-      const user = await this.model.getByEmail(email);
+      const user = await UsersModel.getByEmail(email);
       if (!user) {
         return response.status(401).json({
           message: {
@@ -19,7 +17,6 @@ class UsersController {
         });
       } else {
         const isPasswordValid = await bcryptjs.compare(password, user.password);
-
         if (!isPasswordValid) {
           return response.status(401).json({
             message: {
@@ -88,7 +85,7 @@ class UsersController {
         support = false,
       } = request.body;
 
-      const user = await this.model.getByEmail(email);
+      const user = await UsersModel.getByEmail(email);
 
       if (user) {
         return response.status(400).json({
@@ -99,7 +96,7 @@ class UsersController {
         });
       } else {
         const passwordHash = await hash(password, 16);
-        await this.model.create({
+        const user = await UsersModel.create({
           first_name,
           last_name,
           email,
@@ -109,9 +106,10 @@ class UsersController {
           support,
         });
         return response.status(201).json({
+          user,
           message: {
             title: "Usuário criado com sucesso!",
-            description: "Conta disponível login.",
+            description: "Conta disponível para login.",
           },
         });
       }

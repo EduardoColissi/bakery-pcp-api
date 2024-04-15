@@ -32,4 +32,4 @@ class UsersModel {
   }
 }
 
-export default UsersModel;
+export default new UsersModel();

@@ -15,9 +15,10 @@ model Companies {
   email         String    @db.VarChar(100)
   cellphone     String    @db.VarChar(11)
   logo          Bytes?    @db.LongBlob
-  color         String    @db.VarChar(15)
+  primary_color   String    @db.VarChar(15) 
+  secondary_color String  @db.VarChar(15)
   street        String    @db.VarChar(100)
-  number        String    @db.VarChar(10)
+  number        Int    
   complement    String?   @db.VarChar(100)
   neighborhood  String    @db.VarChar(100)
   city          String    @db.VarChar(100)
@@ -36,7 +37,7 @@ model Companies {
 model Users {
   id            String    @id     @default(uuid())
   first_name    String    @db.VarChar(50)
-  last_name     String    @db.VarChar(0)
+  last_name     String    @db.VarChar(50)
   email         String    @db.VarChar(100) @unique
   cellphone     String    @db.VarChar(11)
   password      String    @db.VarChar(150)

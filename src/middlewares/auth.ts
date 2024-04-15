@@ -10,7 +10,12 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return res.status(401).json({ message: "Por favor, logue-se antes." });
+    return res.status(401).json({
+      message: {
+        title: "Não autorizado.",
+        description: "Por favor, faça login para continuar.",
+      },
+    });
   }
 
   const token = authorization.split(" ")[1];
@@ -26,6 +31,12 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       return next();
     }
   } catch (err) {
-    return res.status(404).json({ message: "Usuário não autorizado" });
+    console.log(err);
+    return res.status(404).json({
+      message: {
+        title: "Não autorizado.",
+        description: "Usuário não autorizado.",
+      },
+    });
   }
 };

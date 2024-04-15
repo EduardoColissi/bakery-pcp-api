@@ -1,5 +1,5 @@
 export interface User {
-  id?: number;
+  id?: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -7,7 +7,7 @@ export interface User {
   password: string;
   master: boolean;
   support: boolean;
-  avatar?: string;
+  avatar?: Buffer;
   created_at?: Date;
   updated_at?: Date;
 }
